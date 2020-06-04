@@ -53,7 +53,8 @@ public class MainWindow extends JFrame implements WindowListener{
 	    }); 
 	    add(b2);
 	    
-	    setSize(400, 400);  
+	    setSize(400, 400);
+	    setLocationRelativeTo(null);
 	    setLayout(null);  
 	    addWindowListener(this);
 	    setVisible(true);
