@@ -2,13 +2,24 @@ package de.traviadan;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
 public class MainWindow extends JFrame implements WindowListener{
@@ -17,7 +28,8 @@ public class MainWindow extends JFrame implements WindowListener{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	private JPopupMenu popupMenu;
+	
 	public MainWindow() {
 		super();
 		this.init();
@@ -53,13 +65,85 @@ public class MainWindow extends JFrame implements WindowListener{
 	    }); 
 	    add(b2);
 	    
+	    this.createMenuBar();
+	    this.createPopupMenu();
+	    
+	    // Size of the window
 	    setSize(400, 400);
+	    
+	    // Locate Window in the middle of the screen
 	    setLocationRelativeTo(null);
-	    setLayout(null);  
+	    
+	    // set layout
+	    setLayout(null);
+	    
+	    // Listen to window events
 	    addWindowListener(this);
+	    
+	    // Show window
 	    setVisible(true);
 	}
 
+	private void createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        BufferedImage img = null;
+        try {
+			img = ImageIO.read(getClass().getResource("/de/traviadan/resources/exit.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        ImageIcon exitIcon = new ImageIcon(img);
+
+        JMenu fileMenu = new JMenu("File");
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+
+        JMenuItem eMenuItem = new JMenuItem("Exit", exitIcon);
+        eMenuItem.setMnemonic(KeyEvent.VK_E);
+        eMenuItem.setToolTipText("Exit application");
+        eMenuItem.addActionListener((event) -> System.exit(0));
+
+        fileMenu.add(eMenuItem);
+        menuBar.add(fileMenu);
+
+        setJMenuBar(menuBar);
+    }
+	
+	private void createPopupMenu() {
+
+        popupMenu = new JPopupMenu();
+
+        JMenuItem maximizeMenuItem = new JMenuItem("Maximize");
+        maximizeMenuItem.addActionListener((e) -> {
+            if (getExtendedState() != JFrame.MAXIMIZED_BOTH) {
+                setExtendedState(JFrame.MAXIMIZED_BOTH);
+                maximizeMenuItem.setEnabled(false);
+            }
+        });
+
+        popupMenu.add(maximizeMenuItem);
+
+        JMenuItem quitMenuItem = new JMenuItem("Quit");
+        quitMenuItem.addActionListener((e) -> System.exit(0));
+
+        popupMenu.add(quitMenuItem);
+
+        addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+                if (getExtendedState() != JFrame.MAXIMIZED_BOTH) {
+                    maximizeMenuItem.setEnabled(true);
+                }
+
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
+    }
+	
 	private void showOptionDialog() {
 	    final JCheckBox check = new JCheckBox("Tick me");
         final Object[] options = {'e', 2, 3.14, 4, 5, "TURTLES!", check};
