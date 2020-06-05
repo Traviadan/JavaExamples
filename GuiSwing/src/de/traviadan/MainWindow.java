@@ -8,19 +8,26 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
+
+import java.io.InputStreamReader;
 
 public class MainWindow extends JFrame implements WindowListener{
 
@@ -29,6 +36,7 @@ public class MainWindow extends JFrame implements WindowListener{
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPopupMenu popupMenu;
+	private List<BufferedImage> cards = new ArrayList<BufferedImage>();
 	
 	public MainWindow() {
 		super();
@@ -42,6 +50,12 @@ public class MainWindow extends JFrame implements WindowListener{
 	
 	private void init() {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		try {
+			this.loadCards();
+		} catch (IOException e) {
+			System.out.println("Fehler beim Laden des Kartendecks: " + e.getMessage());
+		}
 		
 		final JTextField tf1=new JTextField();  
 	    tf1.setBounds(50, 50, 150, 20);  
@@ -68,8 +82,12 @@ public class MainWindow extends JFrame implements WindowListener{
 	    this.createMenuBar();
 	    this.createPopupMenu();
 	    
+	    JLabel card = new JLabel(new ImageIcon(this.cards.get(0)));
+	    card.setBounds(200, 300, 67, 100);
+	    add(card);
+	    
 	    // Size of the window
-	    setSize(400, 400);
+	    setSize(800, 650);
 	    
 	    // Locate Window in the middle of the screen
 	    setLocationRelativeTo(null);
@@ -82,8 +100,29 @@ public class MainWindow extends JFrame implements WindowListener{
 	    
 	    // Show window
 	    setVisible(true);
+	    
+	    this.loadFile();
 	}
 
+	private void loadCards() throws IOException {
+        this.cards.add(ImageIO.read(getClass().getResource("/de/traviadan/resources/card_a_s.png")));
+	}
+	
+	private void loadFile() {
+		InputStream input = getClass().getResourceAsStream("/de/traviadan/resources/test.txt");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+		StringBuilder sb = new StringBuilder();
+		String line;
+		try {
+			while((line = reader.readLine()) != null) {
+				sb.append(line).append("\n");
+			}
+		} catch (IOException e) {
+			System.out.println("I/O Exception: " + e);
+		}
+		System.out.println(sb.toString());
+	}
+	
 	private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         BufferedImage img = null;
