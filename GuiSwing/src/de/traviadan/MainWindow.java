@@ -5,8 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,7 +27,7 @@ import javax.swing.JTextField;
 
 import java.io.InputStreamReader;
 
-public class MainWindow extends JFrame implements WindowListener{
+public class MainWindow extends JFrame{
 
 	/**
 	 * 
@@ -96,7 +94,7 @@ public class MainWindow extends JFrame implements WindowListener{
 	    setLayout(null);
 	    
 	    // Listen to window events
-	    addWindowListener(this);
+	    addWindowListener(new DialogWindowClosingListener());
 	    
 	    // Show window
 	    setVisible(true);
@@ -200,56 +198,4 @@ public class MainWindow extends JFrame implements WindowListener{
             System.out.println(":( no choice");
         }
 	}
-
-	@Override
-	public void windowActivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowClosed(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowClosing(WindowEvent arg0) {
-		int choice = JOptionPane.showOptionDialog(
-				this,
-				"Wirklich schliessen?",
-				"Quit?",
-				JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE,
-				null, null, null);
-		if(choice == JOptionPane.YES_OPTION) {
-			dispose();
-		}
-		
-	}
-
-	@Override
-	public void windowDeactivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeiconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowIconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowOpened(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

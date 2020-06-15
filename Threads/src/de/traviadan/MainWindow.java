@@ -73,23 +73,21 @@ public class MainWindow extends JFrame implements WindowListener{
 	
 	private void init() {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		
 	    
 	    this.createMenuBar();
 	    this.createPopupMenu();
+
+	    // Create Widgets
 	    
-	    // Size of the window
-	    setSize(800, 650);
-	    
-	    // Locate Window in the middle of the screen
-	    setLocationRelativeTo(null);
 	    
 	    // set layout
 	    setLayout(new BorderLayout(5, 5));
-	    
+	    // Size of the window
+	    setSize(800, 650);
+	    // Locate Window in the middle of the screen
+	    setLocationRelativeTo(null);
 	    // Listen to window events
 	    addWindowListener(this);
-	    
 	    // Show window
 	    setVisible(true);
 	    
@@ -134,30 +132,6 @@ public class MainWindow extends JFrame implements WindowListener{
 			log.msg("I/O-exception:" + e.getMessage(), Log.Level.Failure);
 		}
 		return sb.toString();
-	}
-	
-	private void printToFile(String text) {
-		URL resourceUrl = getClass().getResource("/de/traviadan/resources/ini.txt");
-		File file = null;
-		try {
-			file = new File(resourceUrl.toURI());
-		} catch (URISyntaxException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-		try {
-			//OutputStream output = new FileOutputStream(new File(resourceUrl.toURI()));
-			PrintWriter writer = new PrintWriter(new FileWriter(new File(resourceUrl.toURI())));
-			writer.print(text);
-			writer.close();
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			System.out.println("File not found: " + e.getMessage());
-		} catch (IOException e) {
-			System.out.println("IOException: " + e.getMessage());
-		}
 	}
 	
 	private void loadProperties() {
