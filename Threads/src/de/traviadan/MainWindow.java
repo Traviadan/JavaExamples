@@ -53,29 +53,29 @@ public class MainWindow extends JFrame implements WindowListener{
 	
 	public MainWindow() {
 		super();
-		this.init();
+		init();
 	}
 	
-	public MainWindow(String title, Log log) {
+	public MainWindow(String title, Log logger) {
 		super(title);
-		if(log != null) {
-			this.log = log;
+		if (log != null) {
+			log = logger;
 		} else {
-			this.log = new Log();
-			this.log.lvl = Log.Level.Debug;
-			this.log.out = Log.Out.System;
-			this.log.start();
+			log = new Log();
+			log.lvl = Log.Level.Debug;
+			log.out = Log.Out.System;
+			log.start();
 		}
-		this.loadProperties();
+		loadProperties();
 		log.msg("Initialisierung");
-		this.init();
+		init();
 	}
 	
 	private void init() {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	    
-	    this.createMenuBar();
-	    this.createPopupMenu();
+	    createMenuBar();
+	    createPopupMenu();
 
 	    // Create Widgets
 	    

@@ -1,11 +1,10 @@
 package de.traviadan;
 
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.RandomAccessFile;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -17,10 +16,7 @@ public class Log extends Thread {
 	public enum Out {
 		System, File, Db
 	}
-	private String workingDir = System.getProperty("user.dir");
-	private FileWriter fw;
-	private BufferedWriter bw;
-	private PrintWriter pw;
+	private Writer writer;
 
 	private Queue<String> logs = new LinkedList<>();
 	public Log.Level lvl = Log.Level.Failure;
@@ -34,55 +30,60 @@ public class Log extends Thread {
 		do {
 			synchronized (this.logs) {
 				try {
-					this.logs.wait();
+					logs.wait();
 				} catch (InterruptedException e) {
 					interrupt();
 				}
-				this.printLog();
+				printLog();
 			}
 		} while(!isInterrupted());
-		this.msg("Log-Thread beendet");
-		this.printLog();
+		msg("Log-Thread beendet");
+		printLog();
 		try {
-			this.closeLogfile();
+			closeLogfile();
 		} catch (IOException e) {
 			System.out.println("I/O Exception beim schliessen des Logfiles: " + e.getMessage());
 		}
 	}
 	
 	private void printLog() {
-		while(this.logs.peek() != null) {
-			switch(this.out) {
+		while(logs.peek() != null) {
+			switch(out) {
 			case File:
 				try {
-					this.getPrintWriter().println(this.logs.poll());
+					getPrintWriter().write(logs.poll());
+					getPrintWriter().write(System.lineSeparator());
 				} catch (IOException e) {
-					this.out = Log.Out.System;
-					this.msg("I/O Exception beim schreiben ins Logfile: " + e.getMessage(), Log.Level.Failure);
+					out = Log.Out.System;
+					msg("I/O Exception beim schreiben ins Logfile: " + e.getMessage(), Log.Level.Failure);
 				}
 				break;
 			case Db:
 				break;
 			default:
-				System.out.println(this.logs.poll());
+				System.out.println(logs.poll());
 			}
+		}
+		try {
+			getPrintWriter().flush();
+		} catch (IOException e) {
+			out = Log.Out.System;
+			msg("I/O Exception beim flushen: " + e.getMessage(), Log.Level.Failure);
 		}
 	}
 
 	private void closeLogfile() throws IOException {
-		if(this.pw != null) {
-			this.pw.close();
-			this.bw.close();
-			this.fw.close();
+		if(writer != null) {
+			writer.close();
 		}
 	}
-	private PrintWriter getPrintWriter() throws IOException {
-		if(this.pw == null) {
-			this.fw = new FileWriter(this.workingDir + "/Thread.log", true);
-		    this.bw = new BufferedWriter(fw);
-		    this.pw = new PrintWriter(bw);
+	private Writer getPrintWriter() throws IOException {
+		if (writer == null) {
+			writer = Files.newBufferedWriter( Paths.get( System.getProperty("user.dir") + "/Thread.log" ), 
+					StandardOpenOption.CREATE,
+					StandardOpenOption.APPEND);
 		}
-		return this.pw;
+		return writer;
 	}
 	
 	public void msg(String msg) {
