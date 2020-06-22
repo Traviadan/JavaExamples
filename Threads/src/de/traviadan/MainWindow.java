@@ -21,6 +21,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -37,6 +39,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
+
+import de.traviadan.helper.Log;
 
 import java.io.InputStreamReader;
 
@@ -58,7 +62,7 @@ public class MainWindow extends JFrame implements WindowListener{
 	
 	public MainWindow(String title, Log logger) {
 		super(title);
-		if (log != null) {
+		if (logger != null) {
 			log = logger;
 		} else {
 			log = new Log();
@@ -89,33 +93,18 @@ public class MainWindow extends JFrame implements WindowListener{
 	    // Listen to window events
 	    addWindowListener(this);
 	    // Show window
-	    setVisible(true);
+	    //setVisible(true);
 	    
 	    log.msg(this.loadFileToString());
 	}
 
 	private void createFile(String name) {
-		URL resourceUrl = getClass().getResource("/de/traviadan/resources/" + name);
-		File file = null;
 		try {
-			file = new File(resourceUrl.toURI());
-		} catch (URISyntaxException e2) {
+			Files.createFile(Paths.get( System.getProperty("user.dir"), "Testfile.tst" ));
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e2.printStackTrace();
+			e.printStackTrace();
 		}
-		if(file != null) {
-			try {
-				if(file.createNewFile()) {
-					System.out.println("File created: " + name);
-				} else {
-					System.out.println("File already exists: " + name);
-				}
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-		
 	}
 	
 	private String loadFileToString() {
@@ -273,6 +262,7 @@ public class MainWindow extends JFrame implements WindowListener{
 				null, null, null);
 		if(choice == JOptionPane.YES_OPTION) {
 			dispose();
+			System.exit(0);
 		}
 		
 	}

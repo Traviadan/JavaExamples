@@ -1,4 +1,4 @@
-package de.traviadan;
+package de.traviadan.helper;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -79,7 +79,7 @@ public class Log extends Thread {
 	}
 	private Writer getPrintWriter() throws IOException {
 		if (writer == null) {
-			writer = Files.newBufferedWriter( Paths.get( System.getProperty("user.dir") + "/Thread.log" ), 
+			writer = Files.newBufferedWriter( Paths.get( System.getProperty("user.dir"), "Thread.log" ), 
 					StandardOpenOption.CREATE,
 					StandardOpenOption.APPEND);
 		}
